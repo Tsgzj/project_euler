@@ -1,0 +1,50 @@
+* Project Eular No.18
+
+** Problem
+By starting at the top of the triangle below and moving to adjacent numbers on the row below, the maximum total from top to bottom is 23.
+
+3
+7 4
+2 4 6
+8 5 9 3
+
+That is, 3 + 7 + 4 + 9 = 23.
+
+Find the maximum total from top to bottom of the triangle list in input.in:
+
+** Solution
+It can be solved by recursion, each node can be calculated with the following equation:
+
+\begin{equation}
+f(k,n) = max(f(k-1, n-1), f(k-1, n))
+\end{equation}
+
+** Code
+The code shows a solution with bottom-up fashion, it can also be solved top-down. The same code works with problem 67.
+
+#+BEGIN_SRC clojure :tangle PE_18.clj
+  (use 'clojure.string)
+
+  (def grid (slurp "./data/p_euler/p18/input.in"))
+  (def grid2 (slurp "./data/p_euler/p67/p067_triangle.txt"))
+
+  (defn ngrid [f]
+    (map
+     (fn [st]
+       (map #(Integer/parseInt %) (split st #" ")))
+     (split f #"\n")))
+
+  (defn maxPathSum [grid]
+    (if (= 1 (count grid))
+      (first grid)
+      (let [prev-max (maxPathSum (drop-last grid))
+            cur (last grid)]
+        (map max (cons (first cur) (map + prev-max (drop 1 cur)))
+             (concat (map + prev-max (drop-last cur)) (list (last cur)))))))
+
+  (apply max (maxPathSum (ngrid grid)))
+  (apply max (maxPathSum (ngrid grid2)))
+#+END_SRC
+
+#+RESULTS:
+: nil#'p-euler.core/grid#'p-euler.core/grid2#'p-euler.core/ngrid#'p-euler.core/maxPathSum10747273
